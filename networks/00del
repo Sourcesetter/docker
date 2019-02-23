@@ -1,0 +1,9 @@
+#!/bin/bash
+# Aufraeumen
+
+docker container stop alpine1 alpine2 alpine3 alpine4
+
+docker container rm alpine1 alpine2 alpine3 alpine4
+
+docker network rm alpine-net
+

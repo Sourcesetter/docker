@@ -1,0 +1,28 @@
+#!/bin/bash
+docker network create --driver bridge alpine-net
+
+docker run -dit --name alpine1 --network alpine-net alpine:latest ash
+docker run -dit --name alpine2 --network alpine-net alpine:latest ash
+# alpine 3 ist nur mit dem bridge netz verbunden (default)
+docker run -dit --name alpine3  alpine:latest ash
+docker run -dit --name alpine4 --network alpine-net alpine:latest ash
+
+# alpine 4 zusaetzlich zu alpine-net mit bridge verbinden
+docker network connect bridge alpine4
+echo "+++++++"
+echo "networkinterfaces from alpine1"
+docker exec -i alpine4 ip addr show
+
+echo "+++++++"
+echo "from alpine1"
+docker exec -i alpine1 ping -c 1 alpine2
+echo "from alpine1"
+docker exec -i alpine1 ping -c 1 alpine3
+echo "+++++++"
+echo "from alpine4"
+docker exec -i alpine4 ping -c 1 alpine2
+echo "from alpine4"
+docker exec -i alpine4 ping -c 1 alpine3
+echo "from alpine4 using IP-Adress of alpine3"
+docker exec -i alpine4 ping -c 1 172.17.0.2
+
